@@ -1,0 +1,6 @@
+# machine-local Claude Code permissions, not shared
+.claude/settings.local.json
+
+# OS cruft
+.DS_Store
+Thumbs.db
