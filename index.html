@@ -42,7 +42,13 @@
      invitation still renders in full and scrolls normally. -->
 <script>document.documentElement.classList.add('js')</script>
 <link rel="stylesheet" href="styles.css">
-<link rel="icon" href="assets/svg/butterfly-b.svg" type="image/svg+xml">
+<!-- Icons, built from assets/svg/icon.svg by tools/build-icons.sh. The .ico and
+     the touch icon sit at the site root because browsers and iOS request those
+     paths by name whether or not a <link> points at them. A browser that
+     understands the SVG prefers it and ignores the rest. -->
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="assets/svg/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 </head>
 
 <body data-open="false">
