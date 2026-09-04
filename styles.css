@@ -109,6 +109,33 @@
   }
   .rule--wide { width: 11.25rem; }
 
+  /* The music toggle is chrome, not part of any screen: it stays put while the
+     deck scrolls. Pinned to the top-right of the design column, falling back to
+     the viewport edge once the column fills the screen. */
+  .music {
+    position: fixed;
+    top: 1rem;
+    right: max(1rem, calc((100% - var(--col)) / 2 + 1rem));
+    z-index: 10;
+    display: grid;
+    place-items: center;
+    width: 2.375rem;
+    height: 2.375rem;
+    padding: 0;
+    color: var(--ink);
+    background: var(--amber-soft);
+    border: 1.5px solid var(--amber);
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 2px 0 rgb(193 71 26 / .18);
+  }
+  .music:hover { background: var(--amber); }
+  .music:active { transform: translateY(1px); box-shadow: none; }
+  .music__icon { width: 1.125rem; height: 1.125rem; }
+  .music[aria-pressed='true'] .music__slash { display: none; }
+  /* Same reasoning as .opener below: without JS there is nothing to toggle. */
+  html:not(.js) .music { display: none; }
+
   :where(a, button):focus-visible {
     outline: 2px solid var(--terracotta);
     outline-offset: 3px;
@@ -530,6 +557,12 @@
   .js body[data-open='false'] .cue    { opacity: 0; translate: 0 0.5rem; }
   .js body[data-open='true']  .opener { opacity: 0; translate: 0 -0.5rem; pointer-events: none; }
 
+  /* The toggle rides in with the invitation. `visibility` keeps it out of the tab
+     order while the gate is closed — the gate never re-closes, so it only ever
+     needs to animate the one way. */
+  .music { transition: opacity .45s var(--ease), translate .45s var(--ease); }
+  .js body[data-open='false'] .music { opacity: 0; translate: 0 -0.5rem; visibility: hidden; }
+
   body[data-open='true'] .cue { animation: cue-bob 1.9s var(--ease) infinite; }
   @keyframes cue-bob {
     0%, 100% { translate: 0 0; }
@@ -562,7 +595,7 @@
   @media (prefers-reduced-motion: reduce) {
     .deck { scroll-behavior: auto; }
     .js [data-reveal] { opacity: 1; translate: none; transition: none; }
-    .opener, .cue, .medallion__flutter, .intro__cat,
+    .opener, .cue, .music, .medallion__flutter, .intro__cat,
     .rings__cat, .table__cat, .collage__cat { animation: none; transition: none; }
     .js body[data-open='false'] .cue { opacity: 1; translate: none; }
   }
