@@ -43,7 +43,6 @@ render() {
     --disable-gpu \
     --no-sandbox \
     --hide-scrollbars \
-    --default-background-color=00000000 \
     --window-size=512,512 \
     --virtual-time-budget=4000 \
     --screenshot="$2" \
@@ -54,9 +53,8 @@ render() {
 render "$root/assets/svg/icon.svg"     "$work/full.png"
 render "$root/assets/svg/icon-tab.svg" "$work/tab.png"
 
-# iOS composites any alpha against black, so this is the one output that gets a
-# ground: the art is flattened onto the site's paper colour and the alpha
-# channel dropped entirely.
+# iOS composites any alpha against black, so the touch icon is flattened onto
+# the cream ground rather than shipped with a transparent edge.
 "${im[@]}" "$work/full.png" \
   -resize 180x180 -filter Lanczos \
   -background '#FDFAE0' -alpha remove -alpha off -strip \
@@ -69,10 +67,8 @@ render "$root/assets/svg/icon-tab.svg" "$work/tab.png"
 "${im[@]}" "$work/tab.png"  -resize 16x16 -filter Lanczos "$work/16.png"
 
 # Listed largest first; the .ico carries all three and the browser chooses.
-# Alpha is kept here — a tab icon should sit on the browser's own colour, not
-# on a cream tile — so no -alpha remove on this one.
 "${im[@]}" "$work/48.png" "$work/32.png" "$work/16.png" \
-  -strip \
+  -background '#FDFAE0' -alpha remove -alpha off -strip \
   "$root/favicon.ico"
 
 entries=$("${im[@]}" identify -format '%wx%h ' "$root/favicon.ico")
