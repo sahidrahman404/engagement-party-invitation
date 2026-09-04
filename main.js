@@ -55,7 +55,7 @@
       entry.target.classList.add('is-visible');
       io.unobserve(entry.target);
     });
-  }, { root: deck, threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+  }, { root: deck, threshold: 0.15 });
 
   targets.forEach(function (el) { io.observe(el); });
 })();
