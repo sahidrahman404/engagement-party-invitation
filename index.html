@@ -60,7 +60,9 @@
 
   <!-- ── 01 Intro ─────────────────────────────────────────────────── -->
   <section class="screen screen--intro" aria-labelledby="intro-title">
-    <div class="medallion" data-reveal>
+    <!-- No data-reveal here: screen 01 is on screen before anyone can scroll, so
+         its parts are choreographed on load in the motion layer instead. -->
+    <div class="medallion">
       <img class="medallion__plate" src="assets/svg/medallion.svg" alt="" aria-hidden="true">
       <h1 class="medallion__title" id="intro-title"><span>You're</span><span>Invited</span></h1>
       <img class="medallion__flutter medallion__flutter--a" src="assets/svg/butterfly-a.svg" alt="" aria-hidden="true">

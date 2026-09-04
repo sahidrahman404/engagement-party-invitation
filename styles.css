@@ -569,8 +569,99 @@
     50%      { translate: 0 0.375rem; }
   }
 
-  .medallion__flutter--a { animation: flutter-a 6.5s ease-in-out infinite; }
-  .medallion__flutter--b { animation: flutter-b 7.5s ease-in-out .8s infinite; }
+  /* ── screen 01 arrival ────────────────────────────────────────────────
+     Plays on load, no gesture required: plate, then title, then butterflies,
+     then the cat. Each part hands off to its idle loop by listing the loop
+     after the entrance with a delay — when two animations touch the same
+     property the later one wins, so the loop takes over the moment it starts
+     and the entrance's `both` fill holds everything until then.
+
+     Nothing here is set in the base rules: with animations off (reduced
+     motion, no CSS animation support) every element is simply already in
+     place, so the invitation can never get stuck invisible. */
+  .medallion__plate {
+    animation: plate-in .45s cubic-bezier(.2, .9, .3, 1.25) .05s both,
+               plate-shake .42s ease-in-out .4s;
+  }
+  @keyframes plate-in {
+    from { opacity: 0; scale: .9; }
+    to   { opacity: 1; scale: 1; }
+  }
+  /* Rotation only, so it layers over plate-in's scale without fighting it. */
+  @keyframes plate-shake {
+    0%, 100% { rotate: 0deg; }
+    18%      { rotate: -1.7deg; }
+    44%      { rotate: 1.2deg; }
+    70%      { rotate: -.55deg; }
+    88%      { rotate: .22deg; }
+  }
+
+  .medallion__title {
+    animation: title-in .48s var(--ease) .38s both,
+               title-shake .38s ease-in-out .8s;
+  }
+  @keyframes title-in {
+    from { opacity: 0; translate: -2.25rem 1.75rem; scale: .94; }
+    to   { opacity: 1; translate: 0 0; scale: 1; }
+  }
+  @keyframes title-shake {
+    0%, 100% { rotate: 0deg; }
+    22%      { rotate: -1.5deg; }
+    52%      { rotate: 1.1deg; }
+    78%      { rotate: -.45deg; }
+  }
+
+  /* Each butterfly drifts in along the diagonal it sits on — a from the upper
+     right, b from the lower left — and then picks up its idle flutter. */
+  .medallion__flutter--a {
+    animation: flutter-in-a .5s var(--ease) .72s both,
+               flutter-a 6.5s ease-in-out 1.25s infinite;
+  }
+  .medallion__flutter--b {
+    animation: flutter-in-b .5s var(--ease) .82s both,
+               flutter-b 7.5s ease-in-out 1.35s infinite;
+  }
+  @keyframes flutter-in-a {
+    from { opacity: 0; translate: 2.5rem -2.5rem; rotate: 20deg; scale: .78; }
+    to   { opacity: 1; translate: 0 0; rotate: 0deg; scale: 1; }
+  }
+  @keyframes flutter-in-b {
+    from { opacity: 0; translate: -2.25rem 2.25rem; rotate: -18deg; scale: .78; }
+    to   { opacity: 1; translate: 0 0; rotate: 0deg; scale: 1; }
+  }
+
+  /* Bubu walks in from off the right edge of the design column. 14rem clears
+     it: the cat's right edge sits at 176 of the 390-wide column, and the
+     column clips its overflow, so she is out of sight at the start. */
+  .intro__cat {
+    animation: cat-in .58s var(--ease) .92s both,
+               cat-breathe 5.5s ease-in-out 1.5s infinite,
+               cat-drift 6.8s ease-in-out 1.5s infinite;
+  }
+  @keyframes cat-in {
+    from { opacity: 0; translate: 14rem 0; rotate: 5deg; }
+    40%  { opacity: 1; }
+    to   { opacity: 1; translate: 0 0; rotate: 0deg; }
+  }
+  /* The butterflies' motion, slowed and shrunk to a cat's weight. */
+  @keyframes cat-drift {
+    0%, 100% { translate: 0 0; rotate: 0deg; }
+    50%      { translate: -.2rem -.35rem; rotate: -2.2deg; }
+  }
+
+  /* Last in: the button arrives as the cat settles, rising as it will later
+     leave. `backwards` and not `both` on purpose — the fill must end with the
+     animation so the declared values, and with them the gate's fade-out
+     transition below, take the property back. A forwards fill would outrank
+     `data-open='true'`'s opacity and pin the button on screen for good.
+     `visibility` keeps it untappable and out of the tab order until it shows,
+     rather than leaving an invisible live button over the intro. */
+  .opener { animation: opener-in .38s var(--ease) 1.42s backwards; }
+  @keyframes opener-in {
+    from { opacity: 0; translate: 0 .625rem; visibility: hidden; }
+    to   { opacity: 1; translate: 0 0; visibility: visible; }
+  }
+
   @keyframes flutter-a {
     0%, 100% { translate: 0 0;        rotate: 0deg; }
     50%      { translate: -.15rem -.4rem; rotate: -5deg; }
@@ -580,10 +671,12 @@
     50%      { translate: .2rem -.3rem; rotate: 6deg; }
   }
 
-  .intro__cat, .rings__cat, .table__cat, .collage__cat {
+  /* .intro__cat is absent on purpose — it carries its own arrival above, which
+     already ends in this same breathe. */
+  .rings__cat, .table__cat, .collage__cat {
     animation: cat-breathe 5.5s ease-in-out infinite;
-    transform-origin: bottom center;
   }
+  .intro__cat, .rings__cat, .table__cat, .collage__cat { transform-origin: bottom center; }
   .rings__cat  { animation-delay: .4s; }
   .table__cat  { animation-delay: .9s; }
   .collage__cat { animation-delay: 1.4s; }
@@ -595,7 +688,8 @@
   @media (prefers-reduced-motion: reduce) {
     .deck { scroll-behavior: auto; }
     .js [data-reveal] { opacity: 1; translate: none; transition: none; }
-    .opener, .cue, .music, .medallion__flutter, .intro__cat,
+    .opener, .cue, .music, .medallion__plate, .medallion__title,
+    .medallion__flutter, .intro__cat,
     .rings__cat, .table__cat, .collage__cat { animation: none; transition: none; }
     .js body[data-open='false'] .cue { opacity: 1; translate: none; }
   }
