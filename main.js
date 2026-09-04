@@ -1,5 +1,6 @@
 /* Rahman & Fia — invitation behaviour.
-   Two jobs: the "Buka Undangan" cover gate, and reveal-on-scroll. No dependencies. */
+   Three jobs: the "Buka Undangan" cover gate, the music, and reveal-on-scroll.
+   No dependencies. */
 (function () {
   'use strict';
 
@@ -13,6 +14,7 @@
     if (body.dataset.open === 'true') return;
     body.dataset.open = 'true';
     deck.focus({ preventScroll: true });
+    play();
   }
 
   if (opener) {
@@ -30,6 +32,76 @@
   window.addEventListener('pageshow', function () {
     if (body.dataset.open === 'false') deck.scrollTop = 0;
   });
+
+  /* ── music ───────────────────────────────────────────────────────── */
+  var song = document.getElementById('song');
+  var toggle = document.getElementById('music');
+
+  /* The track is normalised to -16 LUFS, so this is a stable background level
+     rather than a guess about how loud the file happens to be. */
+  var LEVEL = 0.45;
+  var FADE = 1200;
+  var ramp = null;
+  var wanted = false;   /* what the guest asked for; the element may lag behind it */
+
+  /* Ease the volume instead of cutting it, so the song arrives under the
+     invitation rather than landing on top of it. */
+  function rampTo(target, then) {
+    if (ramp) cancelAnimationFrame(ramp);
+    var from = song.volume;
+    var t0 = performance.now();
+
+    (function step(now) {
+      var k = Math.min((now - t0) / FADE, 1);
+      song.volume = from + (target - from) * k;
+      if (k < 1) { ramp = requestAnimationFrame(step); return; }
+      ramp = null;
+      if (then) then();
+    })(performance.now());
+  }
+
+  function paint() {
+    toggle.setAttribute('aria-pressed', wanted ? 'true' : 'false');
+    toggle.setAttribute('aria-label', wanted ? 'Matikan musik' : 'Nyalakan musik');
+  }
+
+  function play() {
+    if (!song) return;
+    wanted = true;
+    paint();
+    song.volume = 0;
+
+    /* Older browsers return undefined here; only the promise can be rejected,
+       and a rejection must never take the cover gate down with it. */
+    var started = song.play();
+    if (!started) { rampTo(LEVEL); return; }
+
+    started.then(function () {
+      rampTo(LEVEL);
+    }, function () {
+      wanted = false;
+      paint();
+    });
+  }
+
+  if (song && toggle) {
+    toggle.addEventListener('click', function () {
+      if (wanted) {
+        wanted = false;
+        paint();
+        rampTo(0, function () { song.pause(); });
+      } else {
+        play();
+      }
+    });
+
+    /* Nobody wants a tab they switched away from still singing. */
+    document.addEventListener('visibilitychange', function () {
+      if (!wanted) return;
+      if (document.hidden) song.pause();
+      else { var r = song.play(); if (r) r.catch(function () {}); }
+    });
+  }
 
   /* ── reveal on scroll ────────────────────────────────────────────── */
   var targets = document.querySelectorAll('[data-reveal]');

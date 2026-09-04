@@ -155,6 +155,26 @@
   </section>
 
 </main>
+
+<!-- Music. Playback starts inside the "Buka Undangan" click — the user gesture every
+     browser requires before audio may begin — so there is no muted-autoplay trick and
+     no "tap to enable sound" nag. preload="none" keeps the track off the wire until
+     then: a guest who never opens the invitation never downloads it. -->
+<button class="music" type="button" id="music" aria-pressed="true" aria-label="Matikan musik">
+  <svg class="music__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M9 18V5l12-2v13"/>
+    <circle cx="6" cy="18" r="3"/>
+    <circle cx="18" cy="16" r="3"/>
+    <line class="music__slash" x1="3" y1="3" x2="21" y2="21"/>
+  </svg>
+</button>
+
+<audio id="song" loop preload="none">
+  <source src="assets/audio/bubbly.opus" type="audio/ogg; codecs=opus">
+  <source src="assets/audio/bubbly.m4a" type="audio/mp4; codecs=mp4a.40.2">
+</audio>
+
 <script src="main.js"></script>
 </body>
 </html>
