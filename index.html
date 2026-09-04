@@ -42,12 +42,16 @@
      invitation still renders in full and scrolls normally. -->
 <script>document.documentElement.classList.add('js')</script>
 <link rel="stylesheet" href="styles.css">
-<!-- Icons, built from assets/svg/icon.svg by tools/build-icons.sh. The .ico and
-     the touch icon sit at the site root because browsers and iOS request those
-     paths by name whether or not a <link> points at them. A browser that
-     understands the SVG prefers it and ignores the rest. -->
-<link rel="icon" href="/favicon.ico" sizes="32x32">
-<link rel="icon" href="assets/svg/icon.svg" type="image/svg+xml">
+<!-- Icons, built by tools/build-icons.sh. The .ico and the touch icon sit at the
+     site root because browsers and iOS request those paths by name whether or
+     not a <link> points at them.
+
+     The SVG is the head crop rather than the whole cat: a browser that
+     understands it prefers it over every .ico entry, and it gets drawn at 16px
+     in the tab, which is exactly the size the full landscape drawing turns to
+     mush at. The touch icon keeps the whole animal — it renders large. -->
+<link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16">
+<link rel="icon" href="assets/svg/icon-tab.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 </head>
 
