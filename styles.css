@@ -401,9 +401,17 @@
     .week__num  { font-family: var(--font-hand); font-size: 1.125rem; font-weight: 700; line-height: 1.28; color: var(--ink); }
 
     .week__day--on {
-      box-shadow: inset 0 0 0 2px var(--amber);
+      position: relative;
       .week__name { color: var(--terracotta); }
       .week__num  { font-size: 1.375rem; color: var(--terracotta); }
+    }
+    .week__day--on::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 1.5rem;
+      box-shadow: inset 0 0 0 2px var(--amber);
+      pointer-events: none;
     }
 
     .details {
@@ -694,12 +702,31 @@
     50%      { scale: 1.012 .99; }
   }
 
+  /* Screen 03: the amber ring around "26" drops in oversized and settles,
+     then hands off to a slow idle pulse — same "entrance, then the loop
+     takes over" idiom as .intro__cat above. ring-pulse's .95s delay is
+     ring-in's own delay + duration (.45s + .5s), so it takes over the
+     instant ring-in ends. */
+  .js .week[data-reveal].is-visible .week__day--on::after {
+    animation: ring-in .5s cubic-bezier(.2, .9, .3, 1.25) .45s both,
+               ring-pulse 3.2s ease-in-out .95s infinite;
+  }
+  @keyframes ring-in {
+    from { opacity: 0; scale: 1.7; }
+    to   { opacity: 1; scale: 1; }
+  }
+  @keyframes ring-pulse {
+    0%, 100% { scale: 1; }
+    50%      { scale: 1.08; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .deck { scroll-behavior: auto; }
     .js [data-reveal] { opacity: 1; translate: none; transition: none; }
     .opener, .cue, .music, .medallion__plate, .medallion__title,
     .medallion__flutter, .intro__cat,
-    .rings__cat, .table__cat, .collage__cat { animation: none; transition: none; }
+    .rings__cat, .table__cat, .collage__cat,
+    .week__day--on::after { animation: none; transition: none; }
     .js body[data-open='false'] .cue { opacity: 1; translate: none; }
   }
 }
