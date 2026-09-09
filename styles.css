@@ -330,8 +330,11 @@
     .rings__cat {
       position: absolute;
       left: 8.8125rem;              /* design x 276, rings start at 135 */
-      top: 50%;
-      translate: 0 calc(-50% - 0.5625rem);
+      /* top:50% minus half its own height (3.125rem) minus a touch more, so it
+         sits a little above center. Written as top rather than a centering
+         translate because translate is what the idle drift animates — a base
+         translate here would get clobbered by the drift's own 0%/100% values. */
+      top: calc(50% - 3.6875rem);
       width: 4.375rem;
       height: 6.25rem;
     }
@@ -672,14 +675,20 @@
   }
 
   /* .intro__cat is absent on purpose — it carries its own arrival above, which
-     already ends in this same breathe. */
-  .rings__cat, .table__cat, .collage__cat {
-    animation: cat-breathe 5.5s ease-in-out infinite;
+     already ends in this same breathe and drift. */
+  .rings__cat {
+    animation: cat-breathe 5.5s ease-in-out .4s infinite,
+               cat-drift 6.8s ease-in-out .4s infinite;
+  }
+  .table__cat {
+    animation: cat-breathe 5.5s ease-in-out .9s infinite,
+               cat-drift 6.8s ease-in-out .9s infinite;
+  }
+  .collage__cat {
+    animation: cat-breathe 5.5s ease-in-out 1.4s infinite,
+               cat-drift 6.8s ease-in-out 1.4s infinite;
   }
   .intro__cat, .rings__cat, .table__cat, .collage__cat { transform-origin: bottom center; }
-  .rings__cat  { animation-delay: .4s; }
-  .table__cat  { animation-delay: .9s; }
-  .collage__cat { animation-delay: 1.4s; }
   @keyframes cat-breathe {
     0%, 100% { scale: 1 1; }
     50%      { scale: 1.012 .99; }
